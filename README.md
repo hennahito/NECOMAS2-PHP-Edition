@@ -63,6 +63,6 @@ define('api_address','http://localhost/reruas/');
 
 を
 
-define('api_address','http://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/');
+define('api_address','https://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/');
 
 に置き換えてみてください。

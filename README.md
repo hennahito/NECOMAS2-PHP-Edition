@@ -23,7 +23,7 @@ NECOMAS2のPHPバージョン
 
 ・api_access.php
 
-　RERUAS(APIサーバー)に検索リクエストを送信して帰ってきたjsonデータをオブジェクト配列に変換する。
+　RERUAS(レルアス、APIサーバー)に検索リクエストを送信して帰ってきたjsonデータをオブジェクト配列に変換する。
  
 ・config.php
 
@@ -33,7 +33,7 @@ NECOMAS2のPHPバージョン
  
  現状のバージョンを帝甲会devToolに上げてみました。下記リンクからアクセス可能です。
  
- https://ejc.miznet.wjg.jp/teikoukai/development/necomas2php/?query=検索ボックスに何かワードを入れてください
+ https://ejc.miznet.wjg.jp/teikoukai/development/necomas2php/?query=
  
 上記devToolの注意点としてAPIにRERUASエミュレータを使用しています。
  
@@ -43,4 +43,16 @@ NECOMAS2のPHPバージョン
  
  なのでdevToolのNECOMASの検索ボックスに何かワードを入れて検索しても同じ結果が表示されてしまうようになります。
  
+ RERUASエミュレータへのリンクも下記に記しておきます。
  
+ ・NECOMASトップページにコンテンツを表示する時のRERUASレスポンス
+ 
+ https://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/search/?query=name**a
+ 
+ ・NECOMASでぼっちざろっくのカードにアクセスした時のRERUASレスポンス
+ 
+ https://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/search/?query=code**8291RDS
+ 
+ ・ぼっちざろっくのエピソードを取得するRERUASレスポンス
+ 
+ https://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/search/?query=dirlist**8291RDS

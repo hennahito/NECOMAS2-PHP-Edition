@@ -56,3 +56,13 @@ NECOMAS2のPHPバージョン
  ・ぼっちざろっくのエピソードを取得するRERUASレスポンス
  
  https://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/search/?query=dirlist**8291RDS
+
+ローカル環境でNECOMAS PHPを動かす場合はconfig.phpの
+
+define('api_address','http://localhost/reruas/');
+
+を
+
+define('api_address','http://ejc.miznet.wjg.jp/teikoukai/development/reruas_emu/');
+
+に置き換えてみてください。

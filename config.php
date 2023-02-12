@@ -5,3 +5,4 @@ define('api_address','http://localhost/reruas/');
 define('str','D,anime');
 //検索ファイル拡張子(カンマ区切り)
 define('fnx','.mp4,.mkv');
+?>

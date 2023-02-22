@@ -4,12 +4,16 @@
 <?php
 //api情報取得クラスロード
 require('./api_access.php');
-ini_set( 'display_errors', 1);
+require('./config.php');
+ini_set('display_errors', 0);
 //http get取得
 //タイトル検索
 $query=$_GET['query'];
 //仮で検索ヒット件数をここで指定する
 $api_limit='50';
+//現在のシーズン
+$season="2023年冬";
+
 ?>
 
 <head>
@@ -18,6 +22,8 @@ $api_limit='50';
     <title>NECOMAS2</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/jquery.min.js"></script>
+    <!--<script src="./js/suggest.js"></script>-->
 </head>
 
 <body>
@@ -118,7 +124,7 @@ $api_limit='50';
                                     ・"input placeholder="に画面遷移後の検索ワードをテキストボックスに表示させるコードを追加
                                     ・buttonのtypeをsubmitに変更
                                 -->                               
-                                    <input type="text" name="query" placeholder="<?php if($query==''){echo 'タイトル検索';} else{echo $query;}?>" class="form-control"
+                                    <input id="searchword" type="text" name="query" placeholder="タイトル検索"<?php if($query!=''){echo ' value ="'.$query.'"';}?> class="form-control"
                                     aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
                                 <button class="btn btn-outline-primary" type="submit" id="button-addon2">検索</button>
                             </div>
@@ -188,22 +194,42 @@ $api_limit='50';
             <div class="row g-3">
                 <?php
                     //検索結果を取得して$res_arrに格納
-                    //API_access::Get_Json((検索ワード),'(検索ターゲット)','(フォルダのみ検索)','(取得する情報)',(表示件数));
-                    $res_arr=API_access::Get_Json($query,'name','.dir','i_code,name,code,key_T3,key_C3',$api_limit);
+                    //初回でページを開いたときに最新シーズンのタイトルを表示させる
+                    if($query==''){
+                        $res_arr=API_access::Get_Json($season,'key_T3','.dir','i_code,name,code,key_T3,key_C3',$api_limit);
+                    }
+                    else{
+                        //API_access::Get_Json((検索ワード),'(検索ターゲット)','(フォルダのみ検索)','(取得する情報)',(表示件数));
+                        $res_arr=API_access::Get_Json($query,'name','.dir','i_code,name,code,key_T3,key_C3',$api_limit);
+                    }
                     //検索にヒットした数をint型にキャスト
                     //forでループさせる
                     for($i=1;$i<=(int)$res_arr[0]['count'];$i++){
-                        //サブデータが存在しないコンテンツを弾く
-                        if($res_arr[$i]['i_code']!='(NULL)'){
-                            echo '<div class="col-lg-3 col-md-6"><div class="card my-3">';
-                            //サムネイルが無かったらNoimg4.pngを表示させる処理
-                            if($res_arr[$i]['key_C3']=="(NULL)" || $res_arr[$i]['key_C3']==""){
-                                echo '<a href="./individual.html"><img src="./image/Noimg4.png" calss="card-img-top" alt="#"></a><div class="card-body">';
+                        //コンテンツ全表示モード関連
+                        if(allBrowse=='false'){
+                            //サブデータが存在しないコンテンツを弾く
+                            if($res_arr[$i]['i_code']!='(NULL)'){
+                                echo '<div class="col-lg-3 col-md-6"><div class="card my-3">';
+                                //サムネイルが無かったらNoimg4.pngを表示させる処理
+                                if($res_arr[$i]['key_C3']=="(NULL)" || $res_arr[$i]['key_C3']==""){
+                                    echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="./image/Noimg4.png" calss="card-img-top" alt="#"></a><div class="card-body">';
+                                }
+                                else{echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="'.thumbnail_url.$res_arr[$i]['key_C3'].'" calss="card-img-top" alt="#"></a><div class="card-body">';}
+                                echo '<h5 class="card-title text-truncate"><a href="./individual.php?query='.$res_arr[$i]['code'].'">'.$res_arr[$i]['name'].'</a></h5>';
+                                echo '<h6 class="card-subtitle text-muted">'.$res_arr[$i]['key_T3'].'</h6>';
+                                echo '</div></div></div>';
                             }
-                            else{echo '<a href="./individual.html"><img src="'.$res_arr[$i]['key_C3'].'" calss="card-img-top" alt="#"></a><div class="card-body">';}
-                            echo '<h5 class="card-title text-truncate"><a href="./individual.php?query='.$res_arr[$i]['code'].'">'.$res_arr[$i]['name'].'</a></h5>';
-                            echo '<h6 class="card-subtitle text-muted">'.$res_arr[$i]['key_T3'].'</h6>';
-                           echo '</div></div></div>';
+                        }
+                        else if(allBrowse=='true'){
+                            echo '<div class="col-lg-3 col-md-6"><div class="card my-3">';
+                                //サムネイルが無かったらNoimg4.pngを表示させる処理
+                                if($res_arr[$i]['key_C3']=="(NULL)" || $res_arr[$i]['key_C3']==""){
+                                    echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="./image/Noimg4.png" calss="card-img-top" alt="#"></a><div class="card-body">';
+                                }
+                                else{echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="'.thumbnail_url.$res_arr[$i]['key_C3'].'" calss="card-img-top" alt="#"></a><div class="card-body">';}
+                                echo '<h5 class="card-title text-truncate"><a href="./individual.php?query='.$res_arr[$i]['code'].'">'.$res_arr[$i]['name'].'</a></h5>';
+                                echo '<h6 class="card-subtitle text-muted">'.$res_arr[$i]['key_T3'].'</h6>';
+                                echo '</div></div></div>';
                         }
                     }
                 ?>

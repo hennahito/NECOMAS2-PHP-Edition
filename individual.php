@@ -3,6 +3,7 @@ ini_set( 'display_errors', 0);
 require('./api_access.php');
 //Getデータ取得
 $code=$_GET['query'];
+
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +42,7 @@ $code=$_GET['query'];
     <section id="navbar">
         <nav class="navbar navbar-expand-lg navbar bg-dark-subtle">
             <div class="container-fluid">
-                <a class="navbar-brand" href="./index.html">NECOMAS2</a>
+                <a class="navbar-brand" href="./">NECOMAS2</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -87,7 +88,14 @@ $code=$_GET['query'];
         </nav>
     </section>
      <!-- api検索をしてデータを取得 -->
-    <?php $res_arr=API_access::Get_Json($code,'code','.dir','name,key_T0,key_T1,key_T3,key_C3','1'); ?>
+    <?php
+     $res_arr=API_access::Get_Json($code,'code','.dir','name,key_T0,key_T1,key_T3,key_C3,i_code','1');
+     //全コンテンツ表示モードかどうかの判定とか
+    if(allBrowse=='false' && $res_arr[1]['i_code']=="(NULL)"){
+        echo 'コンテンツを表示出来ません';
+        exit;
+    }
+    ?>
     <!--thumbnail-->
     <section id="thumbnail">
         <div class="container-fluid py-3">
@@ -147,7 +155,7 @@ $code=$_GET['query'];
                         </div>
                         <div class="tab-pane fade" id="characteractor" role="tabpanel"
                             aria-labelledby="characteractor-tab">
-                            <h5>キャラクター</h5>
+                            <!--<h5>キャラクター</h5>-->
                             <?php
                             $sprit=explode('*',$res_arr[1]['key_T0']);
                             for($i=0;$i<count($sprit);$i++){
@@ -156,7 +164,13 @@ $code=$_GET['query'];
                             ?>
                         </div>
                         <div class="tab-pane fade" id="stuff" role="tabpanel" aria-labelledby="stuff-tab">
-                            <h5>スタッフ</h5>
+                           <!-- <h5>スタッフ</h5>-->
+                            <?php
+                            $sprit=explode('*',$res_arr[1]['key_T1']);
+                            for($i=0;$i<count($sprit);$i++){
+                                echo '<h5>'.$sprit[$i].'</h5>';
+                            }
+                            ?>
                         </div>
                     </div>
 

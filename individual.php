@@ -1,6 +1,8 @@
 <?php
 ini_set( 'display_errors', 0);
 require('./api_access.php');
+require('./config.php');
+
 //Getデータ取得
 $code=$_GET['query'];
 
@@ -13,7 +15,7 @@ $code=$_GET['query'];
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NECOMAS2</title>
+    <title>NECOMAS&sup2;</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -36,13 +38,13 @@ $code=$_GET['query'];
         </symbol>
     </svg>
 
-    
+
 
     <!--navbar-->
     <section id="navbar">
         <nav class="navbar navbar-expand-lg navbar bg-dark-subtle">
             <div class="container-fluid">
-                <a class="navbar-brand" href="./">NECOMAS2</a>
+                <a class="navbar-brand" href="./?top=1">NECOMAS&sup2;</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -57,29 +59,32 @@ $code=$_GET['query'];
                             <a class="nav-link" href="#">Link</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" id="bd-theme" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                            <a href="#" class="nav-link dropdown-toggle" id="bd-theme" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg class="bi theme-icon-active" width="1em" height="1em" fill="currentColor">
                                     <use href="#moon-stars-fill"></use>
                                 </svg>
                                 <span id="bd-theme-text"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><button type="button" class="dropdown-item" data-bs-theme-value="light" aria-pressed="false">
-                                    <svg class="bi me-2 theme-icon" width="1em" height="1em" fill="currentColor">
-                                        <use href="#sun-fill"></use>
-                                    </svg>light
-                                </button></li>
-                                <li><button type="button" class="dropdown-item" data-bs-theme-value="dark" aria-pressed="false">
-                                    <svg class="bi me-2 theme-icon" width="1em" height="1em" fill="currentColor">
-                                        <use href="#moon-stars-fill"></use>
-                                    </svg>dark
-                                </button></li>                              
-                                <li><button type="button" class="dropdown-item active" data-bs-theme-value="auto" aria-pressed="true">
-                                    <svg class="bi me-2 theme-icon" width="1em" height="1em" fill="currentColor">
-                                        <use href="#circle-half"></use>
-                                    </svg>auto
-                                </button></li>
+                                <li><button type="button" class="dropdown-item" data-bs-theme-value="light"
+                                        aria-pressed="false">
+                                        <svg class="bi me-2 theme-icon" width="1em" height="1em" fill="currentColor">
+                                            <use href="#sun-fill"></use>
+                                        </svg>light
+                                    </button></li>
+                                <li><button type="button" class="dropdown-item" data-bs-theme-value="dark"
+                                        aria-pressed="false">
+                                        <svg class="bi me-2 theme-icon" width="1em" height="1em" fill="currentColor">
+                                            <use href="#moon-stars-fill"></use>
+                                        </svg>dark
+                                    </button></li>
+                                <li><button type="button" class="dropdown-item active" data-bs-theme-value="auto"
+                                        aria-pressed="true">
+                                        <svg class="bi me-2 theme-icon" width="1em" height="1em" fill="currentColor">
+                                            <use href="#circle-half"></use>
+                                        </svg>auto
+                                    </button></li>
                             </ul>
                         </li>
                     </ul>
@@ -87,28 +92,30 @@ $code=$_GET['query'];
             </div>
         </nav>
     </section>
-     <!-- api検索をしてデータを取得 -->
+    <!-- api検索をしてデータを取得 -->
     <?php
-     $res_arr=API_access::Get_Json($code,'code','.dir','name,key_T0,key_T1,key_T3,key_C3,i_code','1');
+     $res_arr=API_access::Get_Json($code,'code','.dir','name,key_T0,key_T1,key_T2,key_T3,key_C3,i_code','1');
      //全コンテンツ表示モードかどうかの判定とか
     if(allBrowse=='false' && $res_arr[1]['i_code']=="(NULL)"){
         echo 'コンテンツを表示出来ません';
         exit;
     }
     ?>
+
     <!--thumbnail-->
     <section id="thumbnail">
         <div class="container-fluid py-3">
             <div class="row">
                 <div class="col-lg-6">
-                    <!-- サムネイル取得コード追加-->
-                    <?php
+                 <!-- サムネイル取得コード追加-->
+                 <?php
                     if($res_arr[1]['key_C3']=="(NULL)" || $res_arr[1]['key_C3']==""){
-                        echo '<img src="./image/Noimg4.png"alt="">';
+                        echo '<img src="./image/Noimg5.png"alt="">';
                     }
-                    else{echo '<img src="'.$res_arr[1]['key_C3'].'" alt="">';}
+                    else{echo '<img src="'.thumbnail_url.$res_arr[1]['key_C3'].'" alt="">';}
                     ?>
-                    
+
+                   
                 </div>
                 <div class="col-lg-6 pt-lg-0 pt-3">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -131,12 +138,18 @@ $code=$_GET['query'];
                                 スタッフ情報等
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="song-tab" data-bs-toggle="tab" data-bs-target="#song"
+                                type="button" role="tab" aria-controls="song" aria-selected="false">
+                                主題歌
+                            </button>
+                        </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="top" role="tabpanel" aria-labelledby="top-tab">
                             <div class="pt-2">
-                                <span class="display-4 ps-1"><?php echo $res_arr[1]['name']; ?></span>
-                                <p class="fs-4 ps-1"><?php echo $res_arr[1]['key_T3'];?></p>
+                                <span class="display-5 ps-1"><?php echo $res_arr[1]['name']; ?></span>
+                                <p class="fs-5 ps-1"><?php echo $res_arr[1]['key_T3'];?></p>
                                 <button type="button" class="btn btn-outline-primary btn-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class="bi bi-download" viewBox="0 0 16 16">
@@ -155,22 +168,52 @@ $code=$_GET['query'];
                         </div>
                         <div class="tab-pane fade" id="characteractor" role="tabpanel"
                             aria-labelledby="characteractor-tab">
-                            <!--<h5>キャラクター</h5>-->
-                            <?php
-                            $sprit=explode('*',$res_arr[1]['key_T0']);
-                            for($i=0;$i<count($sprit);$i++){
-                                echo '<h5>'.$sprit[$i].'</h5>';
-                            }
-                            ?>
+                            <div class="col-md-6 col-sm-12 pt-2">
+                                <div class="flex-column">
+                                <?php
+                                $sprit=explode('*',$res_arr[1]['key_T0']);
+                                    for($i=0;$i<count($sprit);$i++){
+                                        
+                                         echo '<p class="fs-6">'.$sprit[$i].'</p>';
+                                    }
+                                ?>
+                                    
+                                </div>
+                            </div>
+
                         </div>
                         <div class="tab-pane fade" id="stuff" role="tabpanel" aria-labelledby="stuff-tab">
-                           <!-- <h5>スタッフ</h5>-->
-                            <?php
-                            $sprit=explode('*',$res_arr[1]['key_T1']);
-                            for($i=0;$i<count($sprit);$i++){
-                                echo '<h5>'.$sprit[$i].'</h5>';
-                            }
-                            ?>
+                            <div class="col-md-6 col-sm-12 pt-2">
+                                <div class="flex-column">
+                                    <?php 
+                                    $sprit=explode('*',$res_arr[1]['key_T1']);
+                                    for($i=0;$i<count($sprit);$i++){
+                                        echo '<p class="fs-6">'.$sprit[$i].'</p>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="song" role="tabpanel" aria-labelledby="song-tab">
+                            <div class="col-md-6 col-sm-12 pt-2">
+                                <div class="flex-column">
+                                <?php
+                                //特殊文字をエスケープする
+                                $escape=explode('**',char_esqape);
+                                $tmp=$res_arr[1]['key_T2'];
+                                for($i=0;$i<count($escape);$i++){
+                                    $tmp=str_replace(explode(':',$escape[$i])[0],explode(':',$escape[$i])[1],$tmp); 
+                                }
+                               
+                                $sprit=explode('**',$tmp);
+                                for($i=0;$i<count($sprit);$i++){
+                                    echo '<p class="fs-6">'.$sprit[$i].'</p>';
+                                }
+                                ?>
+                                    
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
 
@@ -194,18 +237,30 @@ $code=$_GET['query'];
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- エピソードを取得して表示させる-->
-                        <?php
+                          <!-- エピソードを取得して表示させる-->
+                          <?php
                         //API_access::Get_Json((検索ワード),'(ディレクトリ検索モード)','(動画のみ検索)','(取得する情報)',(表示件数));
-                        $res_arr=API_access::Get_Json($code,'dirlist','.mp4,.mkv','code,name,size,fnx','100');
+                        $res_arr=API_access::Get_Json($code,'dirlist','.mp4,.mkv,.rnk','code,name,size,fnx','100');
                         for($i=1;$i<=(int)$res_arr[0]['count'];$i++){
                             //名前を分割しまくる処理
                             $tmp=explode(' 第',$res_arr[$i]['name']);
-                            $row=explode('話',$tmp[1])[0];
+                            /*
+                            if($tmp[2]!=''){
+                                $row=explode('話',$tmp[2])[0];
+                                
+                            }
+                            else{
+                                $row=explode('話',$tmp[1])[0];
+                            }*/
                             //話数が取得できなっかた時はファイル名をそのままサブタイトルに表示する
                             if(explode('話',$tmp[1])[0]==''){
                                 echo '<tr><th scope="row"></th>';
                                 echo '<td>'.str_replace($res_arr[$i]['fnx'],'',$res_arr[$i]['name']).'</td>';
+                            }
+                            //第が二つあった時は
+                            else if($tmp[2]!=''){
+                                echo '<tr><th scope="row">'.explode('話',$tmp[2])[0].'</th>';
+                                echo '<td>'.explode('」',explode('「',$res_arr[$i]['name'])[1])[0].'</td>';
                             }
                             else{
                                 echo '<tr><th scope="row">'.explode('話',$tmp[1])[0].'</th>';
@@ -243,6 +298,7 @@ $code=$_GET['query'];
                         </tr>';
                         }
                         ?>
+
                     </tbody>
                 </table>
             </div>

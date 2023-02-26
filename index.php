@@ -1,29 +1,60 @@
-<!doctype html>
-<html lang="ja" data-bs-theme="auto">
-
 <?php
 //api情報取得クラスロード
 require('./api_access.php');
 require('./config.php');
-ini_set('display_errors', 0);
+ini_set('display_errors',  0);
 //http get取得
+//現在の最新シーズンを取得
+$fp=fopen(year_list,'r');
+if($_GET['top']=='1'){
+    $year=fgets($fp);
+}
+
+
 //タイトル検索
-$query=$_GET['query'];
+
+if($_GET['query']!=''){
+    $query=$_GET['query'];
+}
+//年
+if($_GET['year']!=''){
+    $year=$_GET['year'];
+}
+//シーズン
+if($_GET['season']!=''){
+    $season=$_GET['season'];
+}
+//カテゴリー
+if($_GET['category']!=''){
+    $category=$_GET['category'];
+}
+//詳細検索
+if($_GET['detail']!=''){
+    $detail=$_GET['detail'];
+}
+/*$query=$_GET['query'];
+$year=$_GET['year'];
+
+$season=$_GET['season'];
+$category=$_GET['category'];
+$detail=$_GET['detail'];
+*/
 //仮で検索ヒット件数をここで指定する
 $api_limit='50';
 //現在のシーズン
-$season="2023年冬";
+//$season="2023年冬";
 
 ?>
+
+<!doctype html>
+<html lang="ja" data-bs-theme="auto">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NECOMAS2</title>
+    <title>NECOMAS&sup2;</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
-    <script src="./js/jquery.min.js"></script>
-    <!--<script src="./js/suggest.js"></script>-->
 </head>
 
 <body>
@@ -48,7 +79,7 @@ $season="2023年冬";
     <section id="navbar">
         <nav class="navbar navbar-expand-lg navbar bg-dark-subtle">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">NECOMAS2</a>
+                <a class="navbar-brand" href="./?top=1">NECOMAS&sup2;</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -109,22 +140,16 @@ $season="2023年冬";
             </div>
         </div>
     </section>
-
-    <!--search-->
     <!--formタグ追加-->
+    <!--search-->
     <form action = "./" method = "GET" >
         <section id="search">
-            <div class="container pb-3">
+        <div class="container pb-3">
                 <div class="row">
                     <div class="col-md-6 mx-auto text-center">
                         <div class="input-group">
                             <div class="input-group input-group-lg">
-                                <!-- 
-                                    ・inputにname追加
-                                    ・"input placeholder="に画面遷移後の検索ワードをテキストボックスに表示させるコードを追加
-                                    ・buttonのtypeをsubmitに変更
-                                -->                               
-                                    <input id="searchword" type="text" name="query" placeholder="タイトル検索"<?php if($query!=''){echo ' value ="'.$query.'"';}?> class="form-control"
+                                <input type="text" name="query" placeholder="タイトル検索"<?php if($query!=''){echo ' value ="'.$query.'"';}?> class="form-control"
                                     aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
                                 <button class="btn btn-outline-primary" type="submit" id="button-addon2">検索</button>
                             </div>
@@ -134,74 +159,114 @@ $season="2023年冬";
             </div>
         </section>
     </form>
-    
 
     <!--more-search-->
-    <section id="more-search">
-        <div class="container pb-3">
-            <div class="row">
-                <div class="col-md-6 mx-auto text-center">
-                    <div class="accordion" id="accordionExample">
+    <form action = "./" method = "GET" >
+        <section id="more-search">
+            <div class="container pb-3">
+                <div class="row">
+                    <div class="col-md-6 mx-auto text-center">
+                        <div class="accordion" id="accordionExample">
 
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    絞り込み検索
-                                </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                                data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        絞り込み検索
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="d-flex">
+                                            <select name="year" class="form-select mb-3" aria-label="select001">
+                                            <option <?php if($year==''){echo 'selected';}?> value="">放送年</option>
+                                                <?php
+                                                $filename=year_list;
+                                                $fp = fopen($filename, 'r');
+                                                if($fp){
+                                                    while($line=fgets($fp)){
+                                                        $line=str_replace('\r\n','',$line);
+                                                        if($year==$line){
+                                                            echo '<option selected value="'.$line.'">'.$line.'年</option>';
+                                                        }
+                                                        else{
+                                                            echo '<option value="'.$line.'">'.$line.'年</option>';
+                                                        }
+                                                    }
+                                                }   
+                                                ?>
+                                            </select>
+                                            <select name="season" class="form-select mb-3" aria-label="select002">
+                                                
+                                                <option <?php if($season==''){echo 'selected';}?> value="">シーズン</option>
+                                                <option <?php if($season=='春'){echo 'selected';}?> value="春">春</option>
+                                                <option <?php if($season=='夏'){echo 'selected';}?> value="夏">夏</option>
+                                                <option <?php if($season=='秋'){echo 'selected';}?> value="秋">秋</option>
+                                                <option <?php if($season=='冬'){echo 'selected';}?> value="冬">冬</option>
+                                            </select>
+                                        </div>
+                                    
+                                    
+                                        <select name="category" class="form-select mb-3" aria-label="Default select example">
 
-                                    <select class="form-select mb-3" aria-label="Default select example">
-
-                                        <option selected>Open this select menu</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                    <input type="text" class="form-control mb-3" aria-label="Sizing example input"
+                                            <option <?php if($category==''){echo 'selected';}?> value="">カテゴリ</option>
+                                            <option <?php if($category=='1'){echo 'selected';}?> value="1">キャラクター：声優名</option>
+                                            <option <?php if($category=='2'){echo 'selected';}?> value="2">スタッフ</option>
+                                            <option <?php if($category=='3'){echo 'selected';}?> value="3">主題歌</option>
+                                     </select>
+                                    <input type="text" name="detail"<?php if($detail!=''){echo ' value ="'.$detail.'"';}?> class="form-control mb-3" aria-label="Sizing example input"
                                         aria-describedby="inputGroup-sizing">
-                                    <select class="form-select mb-3" aria-label="Default select example">
-
-                                        <option selected>Open this select menu</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                    <input type="text" class="form-control mb-3" aria-label="Sizing example input"
-                                        aria-describedby="inputGroup-sizing">
-                                    <button type="button" class="btn btn-outline-primary">絞り込み検索</button>
+                                    <button type="submit" class="btn btn-outline-primary">絞り込み検索</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </form>
 
     <!--index-->
-    <!-- 検索結果を表示できるようにコードを追加
-         API_accessクラスに検索ワードを投げて帰ってきたアレイを
-         forでループさせて表示する
-        -->
-        
     <section id="index">
         <div class="container-fluid my-5">
             <div class="row g-3">
-                <?php
+            <?php
+                    $api_query='';
                     //検索結果を取得して$res_arrに格納
                     //初回でページを開いたときに最新シーズンのタイトルを表示させる
-                    if($query==''){
-                        $res_arr=API_access::Get_Json($season,'key_T3','.dir','i_code,name,code,key_T3,key_C3',$api_limit);
+                    if($query!=''){
+                       // $res_arr=API_access::Get_Json($season,'key_T3','.dir','i_code,name,code,key_T3,key_C3',$api_limit);
+                       $api_query.='name**'.urlencode($query).'*and*';
+
                     }
-                    else{
-                        //API_access::Get_Json((検索ワード),'(検索ターゲット)','(フォルダのみ検索)','(取得する情報)',(表示件数));
-                        $res_arr=API_access::Get_Json($query,'name','.dir','i_code,name,code,key_T3,key_C3',$api_limit);
+                    //シーズン検索
+                    if($year!=''){
+                        if($season!=''){
+                            $api_query.='key_T3**'.$year.urlencode('年'.$season).'*and*';
+                        }
+                        else{
+                            $api_query.='key_T3**'.$year.'*and*';
+                        }
                     }
+                    if($category!='' and $detail!=''){
+                        switch($category){
+                            case '1':
+                                $api_query.='key_T0**'.urlencode($detail).'*and*';
+                                break;
+                            case '2':
+                                $api_query.='key_T1**'.urlencode($detail).'*and*';
+                                break;
+                            case '3':
+                                $api_query.='key_T2**'.urlencode($detail).'*and*';
+                                break;
+                        }
+                    }
+                    $api_query=rtrim($api_query,'*and*');
+                   // echo $api_query;
+                    $res_arr=API_access::Get_API2($api_query,'.dir','i_code,name,code,key_T3,key_C3','-name',$api_limit);
                     //検索にヒットした数をint型にキャスト
                     //forでループさせる
                     for($i=1;$i<=(int)$res_arr[0]['count'];$i++){
@@ -212,7 +277,7 @@ $season="2023年冬";
                                 echo '<div class="col-lg-3 col-md-6"><div class="card my-3">';
                                 //サムネイルが無かったらNoimg4.pngを表示させる処理
                                 if($res_arr[$i]['key_C3']=="(NULL)" || $res_arr[$i]['key_C3']==""){
-                                    echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="./image/Noimg4.png" calss="card-img-top" alt="#"></a><div class="card-body">';
+                                    echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="./image/Noimg5.png" calss="card-img-top" alt="#"></a><div class="card-body">';
                                 }
                                 else{echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="'.thumbnail_url.$res_arr[$i]['key_C3'].'" calss="card-img-top" alt="#"></a><div class="card-body">';}
                                 echo '<h5 class="card-title text-truncate"><a href="./individual.php?query='.$res_arr[$i]['code'].'">'.$res_arr[$i]['name'].'</a></h5>';
@@ -224,7 +289,7 @@ $season="2023年冬";
                             echo '<div class="col-lg-3 col-md-6"><div class="card my-3">';
                                 //サムネイルが無かったらNoimg4.pngを表示させる処理
                                 if($res_arr[$i]['key_C3']=="(NULL)" || $res_arr[$i]['key_C3']==""){
-                                    echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="./image/Noimg4.png" calss="card-img-top" alt="#"></a><div class="card-body">';
+                                    echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="./image/Noimg5.png" calss="card-img-top" alt="#"></a><div class="card-body">';
                                 }
                                 else{echo '<a href="./individual.php?query='.$res_arr[$i]['code'].'"><img src="'.thumbnail_url.$res_arr[$i]['key_C3'].'" calss="card-img-top" alt="#"></a><div class="card-body">';}
                                 echo '<h5 class="card-title text-truncate"><a href="./individual.php?query='.$res_arr[$i]['code'].'">'.$res_arr[$i]['name'].'</a></h5>';
@@ -233,9 +298,7 @@ $season="2023年冬";
                         }
                     }
                 ?>
-
-
-                 
+                </div>
             </div>
 
         </div>

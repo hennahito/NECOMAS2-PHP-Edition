@@ -1,4 +1,4 @@
-# NECOMAS2
+# NECOMAS&sup2;
 NEtwork COntents MAnegement Sharing System
 ## 新しい変更
 
